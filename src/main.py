@@ -32,16 +32,16 @@ def main():
         messages.append({"role": "user", "content": user_message})
 
         try:
-            print("\n[blue]Thinking...[/blue]\n")
+            print("\n[blue]⠋ Thinking...[/blue]\n")
 
             print("[bold green]Assistant:[/bold green]\n")
             print("─" * 50)
 
-            stream_to_terminal(
+            assisstat_response = stream_to_terminal(
                 openrouter_api=openrouter_api,
                 messages=messages
             )
-
+            messages.append({"role": "assistant", "content":assisstat_response})
             print("\n" + "─" * 50 + "\n")
 
         except Exception as e:
