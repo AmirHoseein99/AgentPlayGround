@@ -15,3 +15,6 @@ wheels/
 #uv
 .uv/
 uv.lock
+
+#vscode
+.vscode/
