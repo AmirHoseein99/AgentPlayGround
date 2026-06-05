@@ -1,6 +1,6 @@
 from encodings.punycode import T
 import requests
-from core.config import setting
+from ..core.config import setting
 
 
 class OpenRouterAPI:
@@ -38,10 +38,3 @@ class OpenRouterAPI:
             return response.json()
         else:        
             raise Exception(f"OpenRouter API call failed with status code {response.status_code}: {response.text}")
-
-
-    def format_response(self, response):
-        if "choices" in response and len(response["choices"]) > 0:
-            return response["choices"][0]["message"]["content"]
-        else:
-            raise Exception("Invalid response format from OpenRouter API")

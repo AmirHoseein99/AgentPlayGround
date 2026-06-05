@@ -1,6 +1,6 @@
 import time
 
-from llm.parser import parse_openrouter_stream
+from .parser import parse_openrouter_stream
 
 
 def stream_to_terminal(openrouter_api, messages):

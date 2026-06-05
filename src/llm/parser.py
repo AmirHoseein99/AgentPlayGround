@@ -13,3 +13,9 @@ def parse_openrouter_stream(line) :
                     return content
         except Exception as e :
             print(f" Error while parsing open router sse token, {e}, {line}") 
+
+def format_response(response):
+    if "choices" in response and len(response["choices"]) > 0:
+        return response["choices"][0]["message"]["content"]
+    else:
+        raise Exception("Invalid response format from OpenRouter API")
