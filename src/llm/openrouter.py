@@ -30,7 +30,7 @@ class OpenRouterAPI:
             "Authorization": f"Bearer {setting.OPENROUTER_API_KEY}"
         }
         data = {
-            "model": setting.OPUERTER_MODEL,
+            "model": setting.OPENROUTER_MODEL,
             "messages": messages
         }
         response = requests.post(self.url, headers=headers, json=data)
