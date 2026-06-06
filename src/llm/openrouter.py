@@ -14,7 +14,7 @@ class OpenRouterAPI:
             "Authorization": f"Bearer {setting.OPENROUTER_API_KEY}"
         }
         data = {
-            "model": setting.OPUERTER_MODEL,
+            "model": setting.OPENROUTER_MODEL,
             "messages": messages,
             "stream" : True
         }
