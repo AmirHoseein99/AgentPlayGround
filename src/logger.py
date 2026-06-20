@@ -3,7 +3,7 @@ import logging
 
 LOG_FILES = {
     "cli": "logs/cli.log",
-    "agent": "logs/agent.log",
+    "agent": "logs/agent/agent.log",
     "agent_api": "logs/agent/api.log",
     "agent_parser": "logs/agent/parser.log",
     "web_search_tool": "logs/agent/tools/web_search.log",
