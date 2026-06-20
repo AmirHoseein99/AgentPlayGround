@@ -18,3 +18,9 @@ uv.lock
 
 #vscode
 .vscode/
+
+#logs
+.log/
+
+#datas
+.data/
