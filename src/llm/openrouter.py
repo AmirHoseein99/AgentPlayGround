@@ -1,7 +1,7 @@
-from encodings.punycode import T
 import requests
 from ..core.config import setting
 from ..logger import get_logger
+
 
 class OpenRouterAPI:
     def __init__(self) -> None:
@@ -12,32 +12,33 @@ class OpenRouterAPI:
         session = requests.sessions.Session()
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {setting.OPENROUTER_API_KEY}"
+            "Authorization": f"Bearer {setting.OPENROUTER_API_KEY}",
         }
-        data = {
-            "model": setting.OPENROUTER_MODEL,
-            "messages": messages,
-            "stream" : True
-        }
+        data = {"model": setting.OPENROUTER_MODEL, "messages": messages, "stream": True}
 
-        with session.post(self.url, headers= headers, json=data, stream=True) as response : 
-            for response_lines in response.iter_lines() :
+        with session.post(
+            self.url, headers=headers, json=data, stream=True
+        ) as response:
+            for response_lines in response.iter_lines():
                 yield response_lines
 
     def call_openrouter_api(self, messages):
-        
+
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {setting.OPENROUTER_API_KEY}"
+            "Authorization": f"Bearer {setting.OPENROUTER_API_KEY}",
         }
-        data = {
-            "model": setting.OPENROUTER_MODEL,
-            "messages": messages
-        }
-        self.logger.info(f"calling openrouter api with header : {headers}, data : {data}")
+        data = {"model": setting.OPENROUTER_MODEL, "messages": messages}
+        self.logger.info(
+            f"calling openrouter api with header : {headers}, data : {data}"
+        )
         response = requests.post(self.url, headers=headers, json=data)
         if response.status_code == 200:
             return response.json()
-        else:     
-            self.logger.exception(f"OpenRouter API call failed with status code {response.status_code}: {response.text}")   
-            raise Exception(f"OpenRouter API call failed with status code {response.status_code}: {response.text}")
+        else:
+            self.logger.exception(
+                f"OpenRouter API call failed with status code {response.status_code}: {response.text}"
+            )
+            raise Exception(
+                f"OpenRouter API call failed with status code {response.status_code}: {response.text}"
+            )

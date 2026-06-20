@@ -7,6 +7,3 @@ app = FastAPI()
 
 app.include_router(llm_router, prefix="/api")
 app.include_router(agent_router, prefix="/api")
-
-
-

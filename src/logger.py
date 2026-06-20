@@ -11,7 +11,7 @@ LOG_FILES = {
     "openrouter": "logs/llm/openrouter/openrouter.log",
     "llm_api": "logs/llm/api.log",
     "llm_chat_engine": "logs/llm/chat_engine.log",
-    "llm_parser": "logs/llm/parser.log"
+    "llm_parser": "logs/llm/parser.log",
 }
 
 
@@ -31,8 +31,8 @@ def get_logger(name: str):
     handler = logging.FileHandler(log_path)
 
     formatter = logging.Formatter(
-        fmt='%(asctime)s | %(levelname)-8s | %(name)s | %(filename)s:%(funcName)s:%(lineno)d | %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S'
+        fmt="%(asctime)s | %(levelname)-8s | %(name)s | %(filename)s:%(funcName)s:%(lineno)d | %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
     )
 
     handler.setFormatter(formatter)

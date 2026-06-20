@@ -3,19 +3,16 @@ from tavily import TavilyClient
 from ...core.config import setting
 from ...logger import get_logger
 
+
 def web_search_tool(query: str) -> str:
-    logger = get_logger('web_search_tool')
+    logger = get_logger("web_search_tool")
     logger.info(f"Executing web search tool with query: {query}")
     client = TavilyClient(setting.TAVILY_API_KEY)
     try:
-        response = client.search(
-            query=query,
-            search_depth="advanced"
-        )
+        response = client.search(query=query, search_depth="advanced")
         logger.info(f"Web search completed with response: {response}")
         return response
-    
+
     except Exception as e:
         logger.exception(f"Error occurred during web search: {e}")
         return f"An error occurred during web search: {e}"
-    

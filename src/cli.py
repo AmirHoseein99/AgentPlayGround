@@ -8,6 +8,7 @@ from llm.utils import stream_to_terminal
 
 from logger import get_logger
 
+
 def main():
     logger = get_logger("cli")
     messages = [
@@ -43,11 +44,10 @@ def main():
             print("─" * 50)
 
             assisstat_response = stream_to_terminal(
-                openrouter_api=openrouter_api,
-                messages=messages
+                openrouter_api=openrouter_api, messages=messages
             )
             logger.info(f"Assistant response: {assisstat_response}")
-            messages.append({"role": "assistant", "content":assisstat_response})
+            messages.append({"role": "assistant", "content": assisstat_response})
             print("\n" + "─" * 50 + "\n")
 
         except Exception as e:
