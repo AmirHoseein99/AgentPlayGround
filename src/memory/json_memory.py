@@ -3,10 +3,8 @@ import json
 import os
 
 def append_to_conversation(role, content, conversation_id, tool_name=None):
-    file_path = Path(f"data/conversations/{conversation_id}/{conversation_id}.json")
-    if tool_name : 
-        file_path = Path(f"data/conversations/{conversation_id}/{conversation_id}_tool_calls.json")
 
+    file_path = Path(f"data/conversations/{conversation_id}/{conversation_id}.json")
     file_path.parent.mkdir(parents=True, exist_ok=True)
 
     # load
