@@ -131,8 +131,8 @@ class Agent:
                         raise ValueError(
                             f"tool_args must be dict, got {type(tool_args)}"
                         )
-
-                    tool_result = tool.run(**tool_args)
+                    self.logger.info(f"Executing tool: {tool_name} with args: {tool_args}")
+                    tool_result = tool.execute(**tool_args)
                     append_to_conversation(
                         role="tool",
                         content=tool_result,

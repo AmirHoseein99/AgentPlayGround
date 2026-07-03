@@ -16,7 +16,7 @@ class WebSearchTool(BaseTool):
         "required": ["query"],
     }
 
-    def run(self, query: str) -> str:
+    def execute(self, query: str) -> str:
         logger = get_logger("web_search_tool")
         logger.info(f"Executing web search tool with query: {query}")
         client = TavilyClient(setting.TAVILY_API_KEY)

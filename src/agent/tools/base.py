@@ -7,5 +7,5 @@ class BaseTool(ABC):
     schema: dict
 
     @abstractmethod
-    def run(self, *args, **kwargs):
+    def execute(self, *args, **kwargs):
         pass

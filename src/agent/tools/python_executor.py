@@ -15,7 +15,7 @@ class PythonExecutorTool(BaseTool):
         "required": ["code"],
     }
 
-    def run(self, code: str) -> str:
+    def execute(self, code: str) -> str:
         logger = get_logger("python_executor_tool")
         logger.info(f"Executing Python code: {code}")
         try:
