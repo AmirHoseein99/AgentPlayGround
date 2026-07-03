@@ -1,6 +1,6 @@
 from asyncio.log import logger
 
-from ..llm.prompt import AGENT_SYSTEM_PROMPT
+from ..llm.prompt import build_agent_system_prompt
 from ..llm.openrouter import OpenRouterAPI
 from .parser import agent_format_response
 from .tools.web_search import WebSearchTool
@@ -47,7 +47,7 @@ class Agent:
             role="user", content=user_input, conversation_id=conversation_id
         )
         messages = [
-            {"role": "system", "content": AGENT_SYSTEM_PROMPT},
+            {"role": "system", "content": build_agent_system_prompt(self.tool_definitions)},
             *get_context(conversation_id),
         ]
         for i in range(self.max_steps):

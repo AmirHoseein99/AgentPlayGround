@@ -1,13 +1,15 @@
+from ..agent.agent import agent
+
 from .openrouter import OpenRouterAPI
-from .prompt import AGENT_SYSTEM_PROMPT
+from .prompt import build_agent_system_prompt
 from .parser import format_response, parse_openrouter_stream
 
 openrouter_api = OpenRouterAPI()
 messages = [
-    {"role": "system", "content": AGENT_SYSTEM_PROMPT},
+    {"role": "system", "content": build_agent_system_prompt(agent.tool_definitions)},
 ]
 
-
+س
 def ask_llm(user_input: str):
     messages.append({"role": "user", "content": user_input})
     llm_reponse = openrouter_api.call_openrouter_api(messages=messages)

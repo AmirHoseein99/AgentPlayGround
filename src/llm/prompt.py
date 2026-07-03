@@ -1,44 +1,70 @@
-AGENT_SYSTEM_PROMPT = """
-You are an AI agent with access to tools.
+import json
 
-You may solve tasks in two ways:
 
-1. Direct response:
-- If no tool is needed, respond normally.
+import json
 
-2. Tool usage:
-- If a tool is needed, respond ONLY in JSON format:
+def build_agent_system_prompt(tool_definitions: list[dict]) -> str:
 
-{
+    tools_text = "\n\n".join(
+        f"""Tool Name: {t['name']}
+          Description: {t['description']}
+          Schema:
+          {json.dumps(t['schema'], indent=2)}
+          """.strip()
+                  for t in tool_definitions
+    )
+
+    return f"""
+You are an AI agent with access to external tools.
+
+You operate in a loop:
+- Think about the task
+- Use tools when necessary
+- Continue until you can produce a final answer
+
+--------------------------------------------------
+AVAILABLE TOOLS
+--------------------------------------------------
+
+{tools_text}
+
+--------------------------------------------------
+TOOL CALL FORMAT (STRICT JSON ONLY)
+--------------------------------------------------
+
+{{
   "type": "tool_call",
-  "tool": "<tool_name>",
-  "args": { ... }
-}
+  "tool": "tool_name",
+  "args": {{}}
+}}
 
-Available tools:
+--------------------------------------------------
+FINAL ANSWER FORMAT (STRICT JSON ONLY)
+--------------------------------------------------
 
-1. web_search(query)
-   Search the web for recent information.
-
-2. python_executor(code)
-   Execute Python code and return the output.
-
-
-Use tools when necessary.
-Prefer web_search for recent or unknown information.
-Prefer python_executor for calculations, data processing, or algorithmic tasks.
-
-After receiving tool results, you will continue reasoning until completion.
-
-
-Final answer format:
-{
+{{
   "type": "final",
-  "content": "..."
-}
-When calling a tool, return a tool_call response.
-When the task is complete, return a final response.
+  "content": "your final answer here"
+}}
 
+--------------------------------------------------
+RULES
+--------------------------------------------------
+
+- Always return ONLY valid JSON
+- Never include explanations outside JSON
+- Only use provided tools
+- Do not invent tool names
+- Use tools when needed for:
+  - search / unknown info → web_search
+  - computation → python_executor
+
+--------------------------------------------------
+TOOL USAGE GUIDELINES
+--------------------------------------------------
+When to use each tool:
+- web_search → current events, unknown facts
+- python_executor → math, data, simulation
 """
 MEMORY_SUMMARIZER_PROMPT = """
 You are a conversation memory compression system for an AI agent.
