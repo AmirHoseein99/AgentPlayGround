@@ -40,7 +40,8 @@ class OpenRouterAPI:
             "Content-Type": "application/json",
             "Authorization": f"Bearer {setting.OPENROUTER_API_KEY}",
         }
-        data = {"model": setting.OPENROUTER_MODEL, "messages": messages, "response_format": CALLER[caller]['output_structure'][0]}
+
+        data = {"model": setting.OPENROUTER_MODEL, "messages": messages, "response_format": CALLER[caller]['output_structure']}
         self.logger.info(
             f"calling openrouter api with header : {headers}, data : {data}"
         )
