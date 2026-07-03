@@ -39,7 +39,7 @@ def agent_format_response(response):
         if content.get("type") not in VALID_RESPONSE_TYPES :
             raise ValueError("Invalid response type")
         
-        if content.get("type") == "tool":
+        if content.get("type") == "tool_call":
             if content.get("tool") not in VALID_TOOLS:
                 raise ValueError("Invalid tool requested")
             
