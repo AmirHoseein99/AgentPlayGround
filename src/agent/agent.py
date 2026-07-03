@@ -1,14 +1,14 @@
-from math import log
-from operator import call
-from os import strerror
-
 from ..llm.prompt import AGENT_SYSTEM_PROMPT
 from ..llm.openrouter import OpenRouterAPI
 from .parser import agent_format_response
 from .tools.web_search import web_search_tool
 from .tools.python_executor import python_executor_tool
 from ..logger import get_logger
-from ..memory.memory_manager import initialize_conversation, get_context, append_to_conversation
+from ..memory.memory_manager import (
+    initialize_conversation,
+    get_context,
+    append_to_conversation,
+)
 import json
 
 tool_calling = {"web_search": web_search_tool, "python_executor": python_executor_tool}
@@ -17,15 +17,17 @@ max_steps = 10
 
 
 def call_agent(user_input, conversation_id: str):
-    
+
     initialize_conversation(conversation_id=conversation_id)
-    append_to_conversation(role='user', content=user_input, conversation_id=conversation_id)
+    append_to_conversation(
+        role="user", content=user_input, conversation_id=conversation_id
+    )
 
     logger = get_logger("agent")
 
     messages = [
         {"role": "system", "content": AGENT_SYSTEM_PROMPT},
-        *get_context(conversation_id)
+        *get_context(conversation_id),
     ]
     llm_api = OpenRouterAPI()
 
@@ -34,33 +36,33 @@ def call_agent(user_input, conversation_id: str):
 
         logger.info("Calling OpenRouter API...")
         llm_response = llm_api.call_openrouter_api(messages=messages)
-        logger.info(f'llm response in agent, {llm_response}')
-        
+        logger.info(f"llm response in agent, {llm_response}")
+
         try:
             parsed_response = agent_format_response(llm_response)
             append_to_conversation(
                 role="assistant",
                 content=parsed_response,
-                conversation_id=conversation_id
+                conversation_id=conversation_id,
             )
-            messages.append({
-                "role": "assistant",
-                "content": json.dumps(parsed_response)
-            })
-        except Exception as e: 
+            messages.append(
+                {"role": "assistant", "content": json.dumps(parsed_response)}
+            )
+        except Exception as e:
             logger.exception(e)
-            messages.append({
-                "role": "user",
-                "content":
-                    f"""
+            messages.append(
+                {
+                    "role": "user",
+                    "content": f"""
                         Your previous response could not be parsed.
 
                         Error:
                         {e}
 
                         Please produce a valid structured response.
-                        """
-            })
+                        """,
+                }
+            )
             continue
 
         logger.info(f"Parsed llm response: {parsed_response}")
@@ -69,7 +71,7 @@ def call_agent(user_input, conversation_id: str):
         # FINAL RESPONSE
         # --------------------
         if parsed_response.get("type") == "final":
-            logger.info(f'Agent Final Response : {parsed_response}')
+            logger.info(f"Agent Final Response : {parsed_response}")
             return parsed_response["message"]
 
         # --------------------
@@ -87,21 +89,22 @@ def call_agent(user_input, conversation_id: str):
             try:
                 if not isinstance(tool_args, dict):
                     raise ValueError(f"tool_args must be dict, got {type(tool_args)}")
-                
+
                 tool_result = tool(**tool_args)
                 append_to_conversation(
-                    role='tool',
+                    role="tool",
                     content=tool_result,
                     conversation_id=conversation_id,
-                    tool_name=tool_name
+                    tool_name=tool_name,
                 )
-                messages.append({
-                    "role": "tool",
-                    "content": json.dumps({
-                        "tool": tool_name,
-                        "result": tool_result
-                    })
-                })
+                messages.append(
+                    {
+                        "role": "tool",
+                        "content": json.dumps(
+                            {"tool": tool_name, "result": tool_result}
+                        ),
+                    }
+                )
                 continue
             except Exception as e:
                 logger.exception(e)
@@ -109,12 +112,11 @@ def call_agent(user_input, conversation_id: str):
                     role="tool",
                     content=f"Tool execution failed: {e}",
                     conversation_id=conversation_id,
-                    tool_name=tool_name
+                    tool_name=tool_name,
                 )
-                messages.append({
-                    "role": "tool",
-                    "content": f"Tool execution failed: {e}"
-                })
+                messages.append(
+                    {"role": "tool", "content": f"Tool execution failed: {e}"}
+                )
 
     logger.warning("Sorry, I couldn't complete the task within the step limit.")
-    return 
+    return

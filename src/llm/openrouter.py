@@ -3,15 +3,15 @@ from ..logger import get_logger
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 import requests
-from .structure import *
+from .structure import AGENT_OUTPUT_STRUCTURE, SUMMERIZER_STRUCTURE
 
 CALLER = {
-    'agent': {
-        'output_structure' : AGENT_OUTPUT_STRUCTURE,
+    "agent": {
+        "output_structure": AGENT_OUTPUT_STRUCTURE,
     },
-    'memory_manager' : {
-        'output_structure' : SUMMERIZER_STRUCTURE,
-    }
+    "memory_manager": {
+        "output_structure": SUMMERIZER_STRUCTURE,
+    },
 }
 
 
@@ -34,14 +34,18 @@ class OpenRouterAPI:
             for response_lines in response.iter_lines():
                 yield response_lines
 
-    def call_openrouter_api(self, messages, caller='agent'):
+    def call_openrouter_api(self, messages, caller="agent"):
 
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {setting.OPENROUTER_API_KEY}",
         }
 
-        data = {"model": setting.OPENROUTER_MODEL, "messages": messages, "response_format": CALLER[caller]['output_structure']}
+        data = {
+            "model": setting.OPENROUTER_MODEL,
+            "messages": messages,
+            "response_format": CALLER[caller]["output_structure"],
+        }
         self.logger.info(
             f"calling openrouter api with header : {headers}, data : {data}"
         )
@@ -51,7 +55,7 @@ class OpenRouterAPI:
             total=3,
             backoff_factor=1,
             status_forcelist=[429, 500, 502, 503, 504],
-            allowed_methods=["POST"]
+            allowed_methods=["POST"],
         )
 
         adapter = HTTPAdapter(max_retries=retry)
