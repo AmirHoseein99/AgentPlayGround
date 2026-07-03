@@ -14,15 +14,13 @@ from ..memory.memory_manager import (
 import json
 from .tools.base import BaseTool
 
-max_steps = 10
-
 
 class Agent:
     def __init__(self):
         self.logger = get_logger("agent")
         self.llm_api = OpenRouterAPI()
         self.tools: dict[str, BaseTool] = {}
-
+        self.max_steps = 5  # Maximum number of steps the agent can take
     def register_tool(self, tool: BaseTool):
         self.tools[tool.name] = tool
 
@@ -62,9 +60,9 @@ class Agent:
             {"role": "system", "content": AGENT_SYSTEM_PROMPT},
             *get_context(conversation_id),
         ]
-        for i in range(max_steps):
+        for i in range(self.max_steps):
             self.logger.info(
-                f"Step {i + 1}/{max_steps}: Sending messages to OpenRouter API."
+                f"Step {i + 1}/{self.max_steps}: Sending messages to OpenRouter API."
             )
 
             self.logger.info("Calling OpenRouter API...")
