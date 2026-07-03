@@ -27,7 +27,7 @@ AGENT_OUTPUT_STRUCTURE ={
                                 "additionalProperties": False,
                                 },
                             },
-                        },
+                        }
 
 SUMMERIZER_STRUCTURE  = {
     "type": "json_schema",
