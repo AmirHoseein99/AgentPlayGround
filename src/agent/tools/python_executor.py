@@ -1,7 +1,7 @@
 import subprocess
 import sys
-from ...logger import get_logger
-from .base import BaseTool
+from logger import get_logger
+from agent.tools.base import BaseTool
 
 
 class PythonExecutorTool(BaseTool):

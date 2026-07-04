@@ -4,7 +4,7 @@ from rich import print
 
 from llm.openrouter import OpenRouterAPI
 from llm.utils import stream_to_terminal
-from .agent.agent import agent
+from agent.agent import agent
 from logger import get_logger
 from llm.prompt import build_agent_system_prompt
 

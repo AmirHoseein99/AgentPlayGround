@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from .agent import agent
-from ..logger import get_logger
+from agent import agent
+from logger import get_logger
 
 agent_router = APIRouter(prefix="/agent", tags=["agent"])
 

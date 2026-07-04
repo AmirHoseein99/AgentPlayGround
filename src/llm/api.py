@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
-from .chat_engine import ask_llm, stream_llm
+from llm.chat_engine import ask_llm, stream_llm
 
 router = APIRouter(prefix="/llm", tags=["llm"])
 

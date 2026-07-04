@@ -1,9 +1,9 @@
-from ..core.config import setting
-from ..logger import get_logger
+from core.config import setting
+from logger import get_logger
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 import requests
-from .structure import AGENT_OUTPUT_STRUCTURE, SUMMERIZER_STRUCTURE
+from llm.structure import AGENT_OUTPUT_STRUCTURE, SUMMERIZER_STRUCTURE
 
 CALLER = {
     "agent": {

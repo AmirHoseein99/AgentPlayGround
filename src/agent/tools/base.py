@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from ...exceptions import ToolValidationError, ToolValidationMissError
+from exceptions import ToolValidationError, ToolValidationMissError
 
 
 class BaseTool(ABC):

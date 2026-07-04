@@ -1,17 +1,17 @@
 
-from ..llm.prompt import build_agent_system_prompt
-from ..llm.openrouter import OpenRouterAPI
-from .parser import agent_format_response
-from .tools.web_search import WebSearchTool
-from .tools.python_executor import PythonExecutorTool
-from ..logger import get_logger
-from ..memory.memory_manager import (
+from llm.prompt import build_agent_system_prompt
+from llm.openrouter import OpenRouterAPI
+from agent.tools.web_search import WebSearchTool
+from agent.tools.python_executor import PythonExecutorTool
+from agent.parser import agent_format_response
+from logger import get_logger
+from memory.memory_manager import (
     initialize_conversation,
     get_context,
     append_to_conversation,
 )
 import json
-from .tools.base import BaseTool
+from agent.tools.base import BaseTool
 
 
 class Agent:
