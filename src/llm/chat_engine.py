@@ -9,8 +9,6 @@ messages = [
     {"role": "system", "content": build_agent_system_prompt(agent.tool_definitions)},
 ]
 
-س
-
 
 def ask_llm(user_input: str):
     messages.append({"role": "user", "content": user_input})
