@@ -65,6 +65,10 @@ TOOL USAGE GUIDELINES
 When to use each tool:
 - web_search → current events, unknown facts
 - python_executor → math, data, simulation
+
+When using python_executor:
+- NEVER use "return"
+- ALWAYS assign result to a variable called "result"
 """
 
 
