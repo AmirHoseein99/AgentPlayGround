@@ -118,11 +118,9 @@ class Agent:
                         }
                     )
                 try:
-                    # TODO : add a validation for tool's args
-                    if not isinstance(tool_args, dict):
-                        raise ValueError(
-                            f"tool_args must be dict, got {type(tool_args)}"
-                        )
+
+                    tool.validate(args=tool_args)
+                    
                     self.logger.info(
                         f"Executing tool: {tool_name} with args: {tool_args}"
                     )
