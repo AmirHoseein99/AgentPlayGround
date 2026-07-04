@@ -11,14 +11,14 @@ from memory.memory_manager import (
 )
 import json
 from agent.tools.base import BaseTool
-
+from core.config import setting
 
 class Agent:
     def __init__(self, llm_api: OpenRouterAPI = None):
         self.logger = get_logger("agent")
         self.llm_api = llm_api if llm_api is not None else OpenRouterAPI()
         self.tools: dict[str, BaseTool] = {}
-        self.max_steps = 5  # Maximum number of steps the agent can take
+        self.max_steps = setting.AGENT_MAX_STEP  # Maximum number of steps the agent can take
 
     def register_tool(self, tool: BaseTool):
         self.tools[tool.name] = tool
