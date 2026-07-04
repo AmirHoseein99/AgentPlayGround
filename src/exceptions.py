@@ -2,9 +2,11 @@ class ToolValidationMissError(Exception):
     def __init__(self, message) -> None:
         super().__init__(message)
 
+
 class ParserError(Exception):
     def __init__(self, message) -> None:
         super().__init__(message)
+
 
 class ToolValidationError(Exception):
     def __init__(self, message) -> None:

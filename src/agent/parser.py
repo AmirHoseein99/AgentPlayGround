@@ -33,8 +33,7 @@ def validate_structure(data, logger):
             raise ParserError("Missing tool args")
         if not isinstance(data["args"], dict):
             raise ParserError("Tool args must be a dict")
-        
-        
+
 
 def agent_format_response(response):
     logger = get_logger("agent_parser")

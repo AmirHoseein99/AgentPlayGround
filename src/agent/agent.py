@@ -1,4 +1,3 @@
-from asyncio.log import logger
 
 from ..llm.prompt import build_agent_system_prompt
 from ..llm.openrouter import OpenRouterAPI
@@ -118,9 +117,8 @@ class Agent:
                         }
                     )
                 try:
-
                     tool.validate(args=tool_args)
-                    
+
                     self.logger.info(
                         f"Executing tool: {tool_name} with args: {tool_args}"
                     )
