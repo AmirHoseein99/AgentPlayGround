@@ -1,4 +1,4 @@
-# AgentPlayGround
+# AgentWorkbench
 
 ![Tests](https://github.com/AmirHoseein99/AgentPlayGround/actions/workflows/tests.yml/badge.svg)
 
