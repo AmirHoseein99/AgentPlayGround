@@ -1,3 +1,4 @@
+from exceptions import ParserError, ToolExecutionError, ToolExecutionError, ToolNotFoundError, ToolValidationError
 from llm.prompt import build_agent_system_prompt
 from llm.openrouter import OpenRouterAPI
 from agent.tools.web_search import WebSearchTool
@@ -12,7 +13,10 @@ from memory.memory_manager import (
 import json
 from agent.tools.base import BaseTool
 from core.config import setting
-
+from agent.state import AgentState
+from agent.tool_executer import ToolExecutor
+from agent.llm_runner import LLMRunner
+from agent.response_handler import ResponseHandler
 
 class Agent:
     def __init__(self, llm_api: OpenRouterAPI = None):
@@ -21,7 +25,11 @@ class Agent:
         self.tools: dict[str, BaseTool] = {}
         self.max_steps = (
             setting.AGENT_MAX_STEP
-        )  # Maximum number of steps the agent can take
+        ) # Maximum number of steps the agent can take
+        self.response_handler = ResponseHandler()
+        self.tool_executor = ToolExecutor(tools=self.tools)
+        self.llm_runner = LLMRunner(llm=self.llm_api)
+
 
     def register_tool(self, tool: BaseTool):
         self.tools[tool.name] = tool
@@ -31,6 +39,11 @@ class Agent:
 
     def get_tool(self, tool_name: str):
         return self.tools.get(tool_name, None)
+    
+    def initialize_state(self, user_input: str, conversation_id: str) -> AgentState:
+
+        state = AgentState(conversation_id=conversation_id, user_input=user_input)
+        return state
 
     @property
     def tool_definitions(self):
@@ -42,96 +55,40 @@ class Agent:
             }
             for tool in self.tools.values()
         ]
-
-    def run(self, user_input, conversation_id: str):
-        initialize_conversation(conversation_id=conversation_id)
-        append_to_conversation(
-            role="user", content=user_input, conversation_id=conversation_id
-        )
-        messages = [
-            {
-                "role": "system",
-                "content": build_agent_system_prompt(self.tool_definitions),
-            },
-            *get_context(conversation_id),
-        ]
-        for i in range(self.max_steps):
-            self.logger.info(
-                f"Step {i + 1}/{self.max_steps}: Sending messages to OpenRouter API."
-            )
-
-            self.logger.info("Calling OpenRouter API...")
-            llm_response = self.llm_api.call_openrouter_api(messages=messages)
-            self.logger.info(f"llm response in agent, {llm_response}")
-            try:
-                parsed_response = agent_format_response(llm_response)
-                append_to_conversation(
-                    role="assistant",
-                    content=parsed_response,
-                    conversation_id=conversation_id,
-                )
-                messages.append(
-                    {"role": "assistant", "content": json.dumps(parsed_response)}
-                )
-            except Exception as e:
-                self.logger.exception(e)
-                messages.append(
-                    {
-                        "role": "user",
-                        "content": f"""
-                            Your previous response could not be parsed.
-
-                            Error:
-                            {e}
-
-                            Please produce a valid structured response.
-                            """,
-                    }
-                )
-                continue
-            self.logger.info(f"Parsed llm response: {parsed_response}")
+    
+    def execute_action(self, state:AgentState, parsed_response: dict, conversation_id: str):
             # --------------------
             # FINAL RESPONSE
             # --------------------
             if parsed_response.get("type") == "final":
                 self.logger.info(f"Agent Final Response : {parsed_response}")
+                state.final_answer = parsed_response.get("message")
+                state.finished = True   
                 return parsed_response["message"]
             # --------------------
             # TOOL CALL
             # --------------------
             if parsed_response.get("type") == "tool_call":
-                tool_name = parsed_response.get("tool")
-                tool_args = parsed_response.get("args")
-
-                tool = self.get_tool(str(tool_name))
-
-                if tool is None:
-                    self.logger.error(f"Tool not found: {tool_name}")
-                    messages.append(
-                        {
-                            "role": "tool",
-                            "content": json.dumps(
-                                {
-                                    "tool": tool_name,
-                                    "result": f"tool {tool_name} not found",
-                                }
-                            ),
-                        }
-                    )
+                
                 try:
-                    tool.validate(args=tool_args)
+                    tool_name = parsed_response.get("tool")
+                    tool_args = parsed_response.get("args")
 
-                    self.logger.info(
-                        f"Executing tool: {tool_name} with args: {tool_args}"
+                    tool_result = self.tool_executor.execute(tool_name, tool_args)
+                    state.tool_results.append(
+                        {
+                            "tool": tool_name,
+                            "args": tool_args,  
+                            "result": tool_result,
+                        }  
                     )
-                    tool_result = tool.execute(**tool_args)
                     append_to_conversation(
                         role="tool",
                         content=tool_result,
                         conversation_id=conversation_id,
                         tool_name=tool_name,
                     )
-                    messages.append(
+                    state.messages.append(
                         {
                             "role": "tool",
                             "content": json.dumps(
@@ -139,18 +96,84 @@ class Agent:
                             ),
                         }
                     )
-                    continue
-                except Exception as e:
-                    self.logger.exception(e)
-                    append_to_conversation(
-                        role="tool",
-                        content=f"Tool execution failed: {e}",
-                        conversation_id=conversation_id,
-                        tool_name=tool_name,
+                except ToolNotFoundError as e:
+                    self.logger.error(f"Tool not found: {parsed_response.get('tool')}")
+                    state.messages.append(
+                        {
+                            "role": "tool",
+                            "content": json.dumps(
+                                {
+                                    "tool": parsed_response.get("tool"),
+                                    "result": f"tool {parsed_response.get('tool')} not found",
+                                }
+                            ),
+                        }
                     )
-                    messages.append(
-                        {"role": "tool", "content": f"Tool execution failed: {e}"}
+                except ToolValidationError as e:
+                    self.logger.error(f"Tool validation error: {e}")
+                    state.messages.append(
+                        {
+                            "role": "tool",
+                            "content": json.dumps(
+                                {
+                                    "tool": parsed_response.get("tool"),
+                                    "result": f"tool {parsed_response.get('tool')} validation error: {e}",
+                                }
+                            ),
+                        }
                     )
+                except ToolExecutionError as e:
+                    self.logger.error(f"Tool execution error: {e}")
+                    state.messages.append(
+                        {
+                            "role": "tool",
+                            "content": json.dumps(
+                                {
+                                    "tool": parsed_response.get("tool"),
+                                    "result": f"tool {parsed_response.get('tool')} execution error: {e}",
+                                }
+                            ),
+                        }
+                    )
+    def run(self, user_input, conversation_id: str):
+
+        state = self.initialize_state(user_input, conversation_id)
+
+        append_to_conversation(
+            role="user", content=user_input, conversation_id=conversation_id
+        )
+        state.messages = [
+            {
+                "role": "system",
+                "content": build_agent_system_prompt(self.tool_definitions),
+            },
+            *get_context(conversation_id),
+        ]
+        # for i in range(self.max_steps):
+        while not state.finished and state.current_step < self.max_steps: 
+            self.logger.info(
+                f"Step {state.current_step + 1}/{self.max_steps}: Sending messages to OpenRouter API."
+            )
+            self.logger.info("Calling OpenRouter API...")
+
+            llm_response = self.llm_runner.run(messages=state.messages)
+
+            self.logger.info(f"llm response in agent, {llm_response}")
+
+            try:
+                parsed_response = self.response_handler.parse(llm_response, conversation_id, state, self.logger)
+            except:
+                continue  # Skip to the next iteration to get a new response
+
+            self.logger.info(f"Parsed llm response: {parsed_response}")
+
+            step_outcome = self.execute_action(state, parsed_response, conversation_id)
+            if state.finished:
+                return step_outcome
+            else:
+                state.current_step += 1
+                continue
+
         self.logger.warning(
             "Sorry, I couldn't complete the task within the step limit."
         )
