@@ -7,6 +7,8 @@ LOG_FILES = {
     "agent_api": "logs/agent/api.log",
     "agent_parser": "logs/agent/parser.log",
     "action_executor": "logs/agent/action_executor.log",
+    "planner": "logs/agent/planner.log",
+    "planner_parser": "logs/agent/planner_parser.log",
     "web_search_tool": "logs/agent/tools/web_search.log",
     "python_executor_tool": "logs/agent/tools/python_executor.log",
     "openrouter": "logs/llm/openrouter/openrouter.log",
