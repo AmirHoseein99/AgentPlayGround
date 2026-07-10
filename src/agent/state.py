@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-
+from agent.planner.models import ExecutionPlan
 
 @dataclass
 class AgentState:
@@ -9,6 +9,8 @@ class AgentState:
     messages: list = field(default_factory=list)
 
     current_step: int = 0
+    
+    plan: ExecutionPlan | None = None
 
     last_response: dict | None = None
 
