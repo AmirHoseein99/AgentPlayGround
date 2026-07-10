@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from exceptions import ToolValidationError, ToolValidationMissError
+from exceptions import ToolValidationError
 
 
 class BaseTool(ABC):
@@ -13,7 +13,7 @@ class BaseTool(ABC):
 
         for field in self.schema["required"]:
             if field not in args:
-                raise ToolValidationMissError(f"Missing required field: {field}")
+                raise ToolValidationError(f"Missing required field: {field}")
 
     @abstractmethod
     def execute(self, *args, **kwargs):
