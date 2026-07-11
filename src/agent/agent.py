@@ -24,7 +24,7 @@ class Agent:
         self.max_steps = (
             setting.AGENT_MAX_STEP
         )  # Maximum number of steps the agent can take
-        self.response_handler = ResponseHandler()
+        
         self.tool_executor = ToolExecutor(tools=self.tools)
         self.llm_runner = LLMRunner(llm=self.llm_api)
         self.action_executor = ActionExecutor(tools=self.tools)
@@ -57,31 +57,29 @@ class Agent:
 
     def run(self, user_input, conversation_id: str):
         
+        initialize_conversation(conversation_id)
+        append_to_conversation(conversation_id=conversation_id, role="user", content=user_input)
+        
         state = self.initialize_state(user_input, conversation_id)
         state.plan = self.planner.produce_plan(user_input=user_input)
         
-
-            llm_response = self.llm_runner.run(messages=state.messages)
-
-            self.logger.info(f"llm response in agent, {llm_response}")
-
-            try:
-                parsed_response = self.response_handler.parse(
-                    llm_response, state.conversation_id, state, self.logger
-                )
-            except Exception as e:
-                self.logger.error(e)
-                continue  # Skip to the next iteration to get a new response
-
-            self.logger.info(f"Parsed llm response: {parsed_response}")
-
-            step_outcome = self.action_executor.execute_action(
-                state, parsed_response, state.conversation_id
-            )
-            if state.finished:
-                return step_outcome
+        append_to_conversation(conversation_id=conversation_id, role="system", content=f"Planning completed with {len(state.plan.steps)} steps")
+        
+        
+        results = {}
+        
+        self.setp_executor= StepExecutor(
+            tool_definitions=self.tool_definitions,
+            tools=self.tools
+        )
+        
+        for step in state.plan.steps:
+            append_to_conversation(conversation_id=conversation_id, role="system", content=f"Plan step : {step}")
+            if all(results.get(dep_id) is not None for dep_id in step.depends_on):
+                result = self.setp_executor.execute_step(step, results, state)
+                results[step.id] = result
             else:
-                state.current_step += 1
+                self.logger.warning(f"Step {step.id} dependencies not met, skipping")
                 continue
 
         self.logger.warning(
