@@ -111,6 +111,35 @@ Examples:
     - Simulations
     - Parsing or transforming structured data
 
+    Use the Python Executor ONLY when the task requires actual computation or programmatic processing.
+
+    Examples:
+    - Mathematical calculations
+    - Data analysis
+    - Reading or writing files
+    - Parsing large JSON/CSV/XML files
+    - Running algorithms
+    - Generating charts or plots
+    - Statistical analysis
+    - Transforming datasets
+    - Executing code requested by the user
+
+    Do NOT use Python for:
+    - General reasoning
+    - Summarization
+    - Comparisons
+    - Recommendations
+    - Planning
+    - Brainstorming
+    - Writing text
+    - Explaining concepts
+    - Answering questions that can be solved with language reasoning alone
+
+    If the task can be completed by reasoning and writing, respond directly without calling Python.
+
+    Before calling Python, ask yourself:
+    "Do I actually need to execute code to answer this?"
+    If the answer is no, do not call the Python tool.
 When using python_executor:
 - NEVER use "return"
 - ALWAYS assign the final value to a variable named "result"
