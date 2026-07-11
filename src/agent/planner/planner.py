@@ -1,6 +1,5 @@
 import json
 
-from src.agent.executor.executor_prompt import build_step_executor_system_prompt
 from src.agent.llm_runner import LLMRunner
 from src.agent.planner.models import ExecutionPlan
 from src.llm.openrouter import OpenRouterAPI

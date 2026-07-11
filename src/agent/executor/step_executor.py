@@ -7,7 +7,7 @@ from src.agent.response_handler import ResponseHandler
 from src.agent.state import AgentState
 from src.llm.openrouter import OpenRouterAPI
 from src.logger import get_logger
-from src.agent.planner.models import ExecutionPlan, PlanStep, StepStatus
+from src.agent.planner.models import PlanStep, StepStatus
 from src.exceptions import PlanExecutionError
 
 class StepExecutor:
