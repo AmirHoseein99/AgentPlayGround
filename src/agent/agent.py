@@ -81,20 +81,19 @@ class Agent:
                 content=f"Plan step : {step}",
             )
             if all(results.get(dep_id) is not None for dep_id in step.depends_on):
-                
                 result = self.setp_executor.execute_step(step, results, state)
                 results[step.id] = result
-                
+
                 if state.finished:
                     break
-                
+
             else:
                 self.logger.warning(f"Step {step.id} dependencies not met, skipping")
                 continue
 
         if state.finished:
             return state.final_answer
-        
+
         self.logger.warning(
             "Sorry, I couldn't complete the task within the step limit."
         )
