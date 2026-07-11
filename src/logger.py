@@ -10,6 +10,7 @@ LOG_FILES = {
     "AgentResponseHandler": "logs/agent/response_handler.log",
     "planner": "logs/agent/planner/planner.log",
     "planner_parser": "logs/agent/planner/planner_parser.log",
+    "plan_executor": "logs/agent/executor/plan_executor.log",
     "web_search_tool": "logs/agent/tools/web_search.log",
     "python_executor_tool": "logs/agent/tools/python_executor.log",
     "openrouter": "logs/llm/openrouter/openrouter.log",

@@ -15,6 +15,9 @@ CALLER = {
     "memory_manager": {
         "output_structure": SUMMERIZER_STRUCTURE,
     },
+    "executor": {
+        "output_structure": EXECUTOR_OUTPUT_STRUCTUR,
+    }
 }
 
 

@@ -1,3 +1,70 @@
+EXECUTOR_OUTPUT_STRUCTUR = {
+  "type": "json_object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "tool_call",
+        "step_result"
+      ]
+    },
+
+    "tool": {
+      "type": ["string", "null"]
+    },
+
+    "args": {
+      "type": ["object", "null"]
+    },
+
+    "status": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "completed",
+        "failed",
+        "needs_user_input",
+        "in_progress",
+        "null"
+      ]
+    },
+
+    "summary": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+
+    "artifacts": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+
+    "user_question": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+
+  "required": [
+    "type",
+    "tool",
+    "args",
+    "status",
+    "summary",
+    "artifacts",
+    "user_question"
+  ],
+
+  "additionalProperties": False
+}
 PLANNER_OUTPUT_STRUCTURE = {
     "type": "json_object",
     "properties": {
