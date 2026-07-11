@@ -22,7 +22,12 @@ class WebSearchTool(BaseTool):
         logger.info(f"Executing web search tool with query: {query}")
         client = TavilyClient(setting.TAVILY_API_KEY)
         try:
-            response = client.search(query=query, search_depth="advanced")
+            response = client.search(
+                query=query,
+                include_answer="advanced",
+                search_depth="advanced",
+                max_results=10,
+            )
             logger.info(f"Web search completed with response: {response}")
             return response
 
